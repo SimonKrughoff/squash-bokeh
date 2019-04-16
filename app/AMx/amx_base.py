@@ -24,11 +24,15 @@ class BaseApp(APIHelper):
 
     # App parameters
     SNR_CUT = 100
+    PARAMETERS = {'job_id':1967, 'metric':'validate_drp.AM1', 'ci_id':1453, 'ci_dataset':'validation_data_hsc'}
+    
+    # Example URL query string taken from an actual SQUaSH session.
+    # ?job_id=1967&metric=validate_drp.AM1&ci_id=1453&ci_dataset=validation_data_hsc
 
     def __init__(self):
         super().__init__()
         self.doc = curdoc()
-        self.args = self.parse_args()
+        self.args = BaseApp.PARAMETERS
 
         self.message = str()
 
@@ -39,20 +43,6 @@ class BaseApp(APIHelper):
 
         self.load_data(self.job_id, self.selected_metric, self.snr_cut)
 
-    def parse_args(self):
-        """Returns a dictionary with the URL parameters
-        used to configure the app.
-
-        See https://bokeh.pydata.org/en/latest/docs/user_guide/
-        server.html#accessing-the-http-request
-        """
-        args = self.doc.session_context.request.arguments
-
-        parsed_args = {}
-        for key in args:
-            parsed_args[key] = args[key][0].decode("utf-8")
-
-        return parsed_args
 
     def validate_inputs(self):
         """Make sure input parameters are valid."""

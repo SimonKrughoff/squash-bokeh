@@ -191,9 +191,9 @@ class Layout(BaseApp):
         metric = widgetbox(self.metric_widget, width=Layout.SMALL)
         slider = widgetbox(self.snr_slider, width=Layout.LARGE)
 
-        layout = column(header,
+        self.layout = column(header,
                         metric,
                         slider,
                         row(self.plot, self.hist))
 
-        self.doc.add_root(layout)
+        #self.doc.add_root(self.layout)

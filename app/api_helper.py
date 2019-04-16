@@ -16,7 +16,7 @@ class APIHelper:
         self.session = requests.Session()
         self.session.mount('https://',
                            requests.adapters.HTTPAdapter(max_retries=5))
-        self.squash_api_url = APIHelper.SQUASH_API_URL
+        self.squash_api_url = 'https://squash-restful-api.lsst.codes'
 
     def sublist(self, list1, list2):
         return set(list1) <= set(list2)
@@ -31,11 +31,10 @@ class APIHelper:
             a dict with API endpoints and URLs
         """
         endpoint_urls = None
-        try:
-            r = self.session.get(self.squash_api_url)
-            endpoint_urls = r.json()
-        except requests.exceptions.RequestException as e:
-            print(e)
+        r = self.session.get(self.squash_api_url)
+        
+        endpoint_urls = r.json()
+
 
         return endpoint_urls
 
