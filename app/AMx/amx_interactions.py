@@ -10,8 +10,6 @@ class Interactions(Layout):
     """
     def __init__(self):
         super().__init__()
-        import logging
-        logging.error('I cannot paste')
         self.snr_slider.on_change('value', self.on_change_slider)
         self.metric_widget.on_change('value', self.on_change_metric)
 
@@ -54,8 +52,6 @@ class Interactions(Layout):
         self.rms_label.text = "RMS = {:3.2f} marcsec".format(rms)
 
     def on_change_metric(self, attr, old, new):
-        import logging
-        logging.error('I cant type')
         self.selected_metric = new
         self.message = str()
         self.update_header()
