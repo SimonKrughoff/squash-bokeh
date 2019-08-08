@@ -67,3 +67,5 @@ class Interactions(Layout):
     def on_plot_click(self):
         self.squash_id = self.id_map[(self.selected_dataset, self.selected_filter)]
         self.load_data(self.squash_id, self.snr_cut)
+        self.scatter.source = self.cds
+        self.selected_scatter.source = self.selected_cds

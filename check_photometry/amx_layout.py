@@ -95,20 +95,20 @@ class Layout(BaseApp):
 
         self.plot.y_range = Range1d(0, 100)
 
-        scatter = self.plot.circle('snr', 'dist', size=5, fill_alpha=0.2,
+        self.scatter = self.plot.circle('snr', 'dist', size=5, fill_alpha=0.2,
                                    source=self.cds.data, color='lightgray',
                                    line_color=None)
 
-        scatter.nonselection_glyph = Circle(fill_color='lightgray',
+        self.scatter.nonselection_glyph = Circle(fill_color='lightgray',
                                             line_color=None)
 
-        selected_scatter = self.plot.circle('snr', 'dist', size=5,
+        self.selected_scatter = self.plot.circle('snr', 'dist', size=5,
                                             fill_alpha=0.2,
                                             line_color=None,
                                             source=self.selected_cds)
 
         # default bokeh color #1f77b4 (blue)
-        selected_scatter.nonselection_glyph = Circle(fill_color="#1f77b4",
+        self.selected_scatter.nonselection_glyph = Circle(fill_color="#1f77b4",
                                                      fill_alpha=0.2,
                                                      line_color=None)
 
@@ -210,6 +210,6 @@ class Layout(BaseApp):
                         row(dataset, filt),
                         plot,
                         slider,
-                        row(self.hist, self.plot))
+                        row(self.plot, self.hist))
 
         #self.doc.add_root(self.layout)

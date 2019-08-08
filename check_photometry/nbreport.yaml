@@ -1,0 +1,5 @@
+handle: check_photometry
+title: Tool to Check Photometric Quality of CI Runs
+git_repo: https://github.com/lsst-sqre/squash-bokeh
+git_repo_subdir: check_photometry
+ipynb: check_photometry.ipynb
