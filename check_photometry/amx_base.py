@@ -70,7 +70,7 @@ class BaseApp(APIHelper):
         """Make sure input parameters are valid."""
 
         # default dataset and filter
-        self.datasets = list(set(self.jobs['dataset']))
+        self.datasets = sorted(list(set(self.jobs['dataset'])))
         self.selected_dataset = self.datasets[0]
         self.filters = [self.jobs['filter'][i] for i in range(len(self.jobs['filter']))
                         if self.jobs['dataset'][i] == self.selected_dataset]
