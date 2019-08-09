@@ -53,7 +53,7 @@ class Layout(BaseApp):
                                     value=self.selected_filter,
                                     options=self.filters)
 
-
+        self.plot_widget = Button(label="Plot", button_type='success')
 
         self.snr_slider = Slider(start=Layout.MIN_SNR, end=Layout.MAX_SNR,
                                  value=float(self.snr_cut),
@@ -207,9 +207,11 @@ class Layout(BaseApp):
         header = widgetbox(self.header_widget, width=Layout.LARGE)
         dataset = widgetbox(self.datasets_widget, width=Layout.SMALL)
         filt = widgetbox(self.filters_widget, width=Layout.SMALL)
+        plot = widgetbox(self.plot_widget)
         slider = widgetbox(self.snr_slider, width=Layout.LARGE)
 
         self.layout = column(header,
                         row(dataset, filt),
+                        plot,
                         slider,
                         row(self.plot, self.hist))

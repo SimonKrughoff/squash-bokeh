@@ -14,7 +14,7 @@ class Interactions(Layout):
         self.snr_slider.on_change('value', self.on_change_slider)
         self.datasets_widget.on_change('value', self.on_change_datasets)
         self.filters_widget.on_change('value', self.on_change_filters)
-        #self.plot_widget.on_click(self.on_plot_click)
+        self.plot_widget.on_click(self.on_plot_click)
 
 
     def redraw_full_histogram(self):
@@ -78,17 +78,16 @@ class Interactions(Layout):
         self.message = str()
         self.update_filters_widget()
         self.update_header()
-        self.load_data()
-
-        self.redraw_full_histogram()
-        self.redraw_selected_histogram()
 
     def on_change_filters(self, attr, old, new):
 
         self.selected_filter = new
         self.message = str()
         self.update_header()
-        self.load_data()
 
+    def on_plot_click(self):
+       
+        self.load_data()
+       
         self.redraw_full_histogram()
         self.redraw_selected_histogram()
