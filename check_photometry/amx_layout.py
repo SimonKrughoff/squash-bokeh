@@ -53,7 +53,7 @@ class Layout(BaseApp):
                                     value=self.selected_filter,
                                     options=self.filters)
 
-        self.plot_widget = Button(label="Plot", button_type='success')
+
 
         self.snr_slider = Slider(start=Layout.MIN_SNR, end=Layout.MAX_SNR,
                                  value=float(self.snr_cut),
@@ -62,8 +62,11 @@ class Layout(BaseApp):
     def update_filters_widget(self):
         self.filters = [self.jobs['filter'][i] for i in range(len(self.jobs['filter']))
                         if self.jobs['dataset'][i] == self.selected_dataset]
+
         self.filters_widget.options = self.filters
         self.selected_filter = self.filters[0]
+        self.filters_widget.value = self.selected_filter
+
 
     def make_header(self):
         """Header area for the app, include a title and
@@ -96,7 +99,7 @@ class Layout(BaseApp):
         self.plot.y_range = Range1d(0, 100)
 
         self.scatter = self.plot.circle('snr', 'dist', size=5, fill_alpha=0.2,
-                                   source=self.cds.data, color='lightgray',
+                                   source=self.cds, color='lightgray',
                                    line_color=None)
 
         self.scatter.nonselection_glyph = Circle(fill_color='lightgray',
@@ -149,9 +152,9 @@ class Layout(BaseApp):
         # TODO: move to theme.yaml
         self.hist.ygrid.grid_line_color = None
 
-        self.hist.quad(left=0, bottom=self.edges[:-1], top=self.edges[1:],
-                       right=frequencies, color="lightgray",
-                       line_color="lightgray")
+        self.full_hist = self.hist.quad(left=0, bottom=self.edges[:-1], top=self.edges[1:],
+                                        right=frequencies, color="lightgray",
+                                        line_color="lightgray")
 
         # Selected histogram
         frequencies, _ = np.histogram(self.selected_cds.data['dist'],
@@ -197,19 +200,16 @@ class Layout(BaseApp):
 
         self.hist.add_layout(self.rms_span)
 
+
     def make_layout(self):
         """Make the app layout
         """
         header = widgetbox(self.header_widget, width=Layout.LARGE)
         dataset = widgetbox(self.datasets_widget, width=Layout.SMALL)
         filt = widgetbox(self.filters_widget, width=Layout.SMALL)
-        plot = widgetbox(self.plot_widget)
         slider = widgetbox(self.snr_slider, width=Layout.LARGE)
 
         self.layout = column(header,
                         row(dataset, filt),
-                        plot,
                         slider,
                         row(self.plot, self.hist))
-
-        #self.doc.add_root(self.layout)

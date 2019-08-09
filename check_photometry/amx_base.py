@@ -3,12 +3,12 @@ import sys
 
 import numpy as np
 
-from bokeh.io import curdoc
 from bokeh.models import ColumnDataSource
 
 from api_helper import APIHelper # noqa
 
 import requests
+
 
 INFLUXDB_API_URL = "https://influxdb-demo.lsst.codes"
 INFLUXDB_DATABASE = "squash-demo"
@@ -19,7 +19,7 @@ def get_squash_data(run_id, package='validate_drp'):
 
     params={'q': query}
     r = requests.post(url=INFLUXDB_API_URL + "/query", params=params)
-    
+
     result = {'timestamp':[], 'squash_id':[], 'filter':[], 'dataset':[]}
     id_map = {}
     for record in r.json()['results'][0]['series'][0]['values']:
@@ -41,13 +41,12 @@ class BaseApp(APIHelper):
 
     # example metric to use to retrieve data
     METRIC = "validate_drp.AM1"
- 
+
     # Example URL query string taken from an actual SQUaSH session.
     # ?job_id=1967&metric=validate_drp.AM1&ci_id=1453&ci_dataset=validation_data_hsc
 
     def __init__(self, job_id):
         super().__init__()
-        self.doc = curdoc()
 
         jobs, id_map = get_squash_data(str(job_id))
 
@@ -62,15 +61,15 @@ class BaseApp(APIHelper):
 
         self.cds = ColumnDataSource(data={'snr': [], 'dist': []})
         self.selected_cds = ColumnDataSource(data={'snr': [], 'dist': []})
-        
-        self.load_data(self.squash_id, self.snr_cut)
 
+        self.load_data()
 
     def validate_inputs(self):
         """Make sure input parameters are valid."""
 
         # default dataset and filter
         self.datasets = sorted(list(set(self.jobs['dataset'])))
+
         self.selected_dataset = self.datasets[0]
         self.filters = [self.jobs['filter'][i] for i in range(len(self.jobs['filter']))
                         if self.jobs['dataset'][i] == self.selected_dataset]
@@ -80,12 +79,12 @@ class BaseApp(APIHelper):
         # default snr cut
         self.snr_cut = BaseApp.SNR_CUT
 
-
-
-    def load_data(self, squash_id, snr_cut):
+    def load_data(self):
         """Load the data blobs from the SQuaSH API for
         the the selected job
         """
+
+        squash_id = self.id_map[(self.selected_dataset, self.selected_filter)]
 
         # e.g. /blob/885?metric=validate_drp.AM1&name=MatchedMultiVisitDataset
         df = self.get_api_data_as_pandas_df(endpoint='blob', item=squash_id,
@@ -103,7 +102,7 @@ class BaseApp(APIHelper):
         self.cds.data = {'snr': snr, 'dist': dist}
 
         # Select objects with SNR > 100
-        index = np.array(snr) > float(snr_cut)
+        index = np.array(snr) > float(self.snr_cut)
 
         selected_snr = np.array(snr)[index]
         selected_dist = np.array(dist)[index]

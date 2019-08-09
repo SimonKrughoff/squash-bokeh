@@ -1,18 +1,17 @@
 import os
 import pandas as pd
 import requests
-import logging
 
 
 class APIHelper:
 
     def __init__(self):
-        self.logger = logging.getLogger()
 
         self.session = requests.Session()
         self.session.mount('https://',
                            requests.adapters.HTTPAdapter(max_retries=5))
         self.squash_api_url = 'https://squash-restful-api.lsst.codes'
+
 
     def sublist(self, list1, list2):
         return set(list1) <= set(list2)
@@ -28,7 +27,7 @@ class APIHelper:
         """
         endpoint_urls = None
         r = self.session.get(self.squash_api_url)
-        
+
         endpoint_urls = r.json()
 
 

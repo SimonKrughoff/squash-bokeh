@@ -1,7 +1,8 @@
 import numpy as np
+from bokeh.models.ranges import Range1d
+
 
 from amx_layout import Layout
-
 
 class Interactions(Layout):
     """Add app interactions
@@ -13,24 +14,23 @@ class Interactions(Layout):
         self.snr_slider.on_change('value', self.on_change_slider)
         self.datasets_widget.on_change('value', self.on_change_datasets)
         self.filters_widget.on_change('value', self.on_change_filters)
-        self.plot_widget.on_click(self.on_plot_click)
+        #self.plot_widget.on_click(self.on_plot_click)
 
-    def on_change_slider(self, attr, old, new):
-        """ Update scatter plot, histogram statistics and
-        annotations based on the new SNR value.
-        """
-        self.snr_cut = new
 
-        self.message = str()
-        self.update_header()
+    def redraw_full_histogram(self):
 
-        # Update the selected sample
-        index = np.array(self.cds.data['snr']) > float(self.snr_cut)
+        # Redraw the selected histogram
+        frequencies, _ = np.histogram(self.cds.data['dist'],
+                                      self.edges)
 
-        snr = np.array(self.cds.data['snr'])[index]
-        dist = np.array(self.cds.data['dist'])[index]
+        self.full_hist.data_source.data['right'] = frequencies
 
-        self.selected_cds.data = dict(snr=snr, dist=dist)
+        # attempt to adjust x_range
+        hmax = max(frequencies) * 1.1
+        self.hist.x_range = Range1d(0, hmax)
+
+
+    def redraw_selected_histogram(self):
 
         # Redraw the selected histogram
         frequencies, _ = np.histogram(self.selected_cds.data['dist'],
@@ -53,19 +53,42 @@ class Interactions(Layout):
 
         self.rms_label.text = "RMS = {:3.2f} marcsec".format(rms)
 
+    def on_change_slider(self, attr, old, new):
+        """ Update scatter plot, histogram and
+        annotations based on the new SNR value.
+        """
+        self.snr_cut = new
+
+        self.message = str()
+        self.update_header()
+
+        # Update the selected sample
+        index = np.array(self.cds.data['snr']) > float(self.snr_cut)
+
+        snr = np.array(self.cds.data['snr'])[index]
+        dist = np.array(self.cds.data['dist'])[index]
+
+        self.selected_cds.data = dict(snr=snr, dist=dist)
+
+        self.redraw_selected_histogram()
+
     def on_change_datasets(self, attr, old, new):
+
         self.selected_dataset = new
         self.message = str()
         self.update_filters_widget()
         self.update_header()
+        self.load_data()
+
+        self.redraw_full_histogram()
+        self.redraw_selected_histogram()
 
     def on_change_filters(self, attr, old, new):
+
         self.selected_filter = new
         self.message = str()
         self.update_header()
+        self.load_data()
 
-    def on_plot_click(self):
-        self.squash_id = self.id_map[(self.selected_dataset, self.selected_filter)]
-        self.load_data(self.squash_id, self.snr_cut)
-        self.scatter.source = self.cds
-        self.selected_scatter.source = self.selected_cds
+        self.redraw_full_histogram()
+        self.redraw_selected_histogram()
