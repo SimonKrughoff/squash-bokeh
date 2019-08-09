@@ -77,16 +77,16 @@ class Interactions(Layout):
         self.selected_dataset = new
         self.message = str()
         self.update_filters_widget()
-        self.update_header()
-
+        
     def on_change_filters(self, attr, old, new):
 
         self.selected_filter = new
         self.message = str()
-        self.update_header()
-
+       
     def on_plot_click(self):
        
+        self.update_header()
+
         self.load_data()
        
         self.redraw_full_histogram()

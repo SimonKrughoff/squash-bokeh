@@ -204,14 +204,15 @@ class Layout(BaseApp):
     def make_layout(self):
         """Make the app layout
         """
-        header = widgetbox(self.header_widget, width=Layout.LARGE)
         dataset = widgetbox(self.datasets_widget, width=Layout.SMALL)
         filt = widgetbox(self.filters_widget, width=Layout.SMALL)
         plot = widgetbox(self.plot_widget)
+        header = widgetbox(self.header_widget, width=Layout.LARGE)
         slider = widgetbox(self.snr_slider, width=Layout.LARGE)
 
-        self.layout = column(header,
+        self.layout = column(
                         row(dataset, filt),
                         plot,
+                        header,
                         slider,
                         row(self.plot, self.hist))
